@@ -8,19 +8,6 @@ import (
 	"github.com/monopole/myrepos/internal/file"
 )
 
-type OrgName string
-
-type ServerDomain string
-
-func (d ServerDomain) WithPort(p int) string {
-	if p > 0 {
-		return fmt.Sprintf("%s:%d", d, p)
-	}
-	return string(d)
-}
-
-type RepoName string
-
 type MyReposConfig struct {
 	// Path is the path below which all repos are found.
 	// It's specified outside of Layout to avoid extra indents.
@@ -66,6 +53,19 @@ type MyReposConfig struct {
 	// use when cloning, what timeout to use, what port, etc.
 	ServerOpts map[ServerDomain]ServerOpts `yaml:"serverOpts"`
 }
+
+type ServerDomain string
+
+func (d ServerDomain) WithPort(p int) string {
+	if p > 0 {
+		return fmt.Sprintf("%s:%d", d, p)
+	}
+	return string(d)
+}
+
+type OrgName string
+
+type RepoName string
 
 func (mb *MyReposConfig) ToRepos() (result []*ValidatedRepo, err error) {
 	rootDir := mb.absRootDir()
