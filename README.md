@@ -5,7 +5,7 @@ repositories on local disk, using a configuration file.
 
 Install:
 ```
-go install github.com/monopole/myrepos
+go install github.com/monopole/myrepos@latest
 ```
 
 Usage:
