@@ -1,6 +1,5 @@
 package pkg
 
-//go:generate stringer -type=Scheme -linecomment
 type Scheme int
 
 const (

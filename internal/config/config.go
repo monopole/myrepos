@@ -2,13 +2,12 @@ package pkg
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/monopole/myrepos/internal/file"
 )
 
-type MyReposConfig struct {
+type Config struct {
 	// Path is the path below which all repos are found.
 	// It's specified outside of Layout to avoid extra indents.
 	// If the path lacks a leading '/', it will be interpreted
@@ -65,66 +64,8 @@ func (d ServerDomain) WithPort(p int) string {
 
 type OrgName string
 
-type RepoName string
-
-func (mb *MyReposConfig) ToRepos() (result []*ValidatedRepo, err error) {
-	rootDir := mb.absRootDir()
-	if _, isDir := rootDir.Exists(); !isDir {
-		// TODO: make the directory instead of complain that it's missing?
-		// Could be a big mistake, as this would then clone all the repos into it.
-		return nil, fmt.Errorf("repo root directory %q doesn't exist", rootDir)
-	}
-
-	serverSpec := make(map[ServerDomain]*ServerSpec)
-	for d, s := range mb.ServerOpts {
-		serverSpec[d], err = s.ToServerSpec()
-		if err != nil {
-			return
-		}
-	}
-	for domain, orgMap := range mb.Layout {
-		if _, ok := serverSpec[domain]; !ok {
-			serverSpec[domain] = MakeServerSpec()
-		}
-		for orgName, repoList := range orgMap {
-			dirName, origin, upstream := parseOrgName(orgName)
-			for _, repoName := range repoList {
-				result = append(result, &ValidatedRepo{
-					domain:     domain,
-					serverSpec: serverSpec[domain],
-					origin:     origin,
-					upstream:   upstream,
-					rootDir:    rootDir,
-					dirName:    dirName,
-					name:       repoName,
-				})
-			}
-		}
-	}
-	sort.Slice(result, func(i, j int) bool {
-		if result[i].domain != result[j].domain {
-			return result[i].domain < result[j].domain
-		}
-		if result[i].dirName != result[j].dirName {
-			return result[i].dirName < result[j].dirName
-		}
-		return result[i].name < result[j].name
-	})
-	return
-}
-
-func (mb *MyReposConfig) absRootDir() file.Path {
-	if mb.Path == "" {
-		return file.Home()
-	}
-	if mb.Path.IsAbs() {
-		return mb.Path
-	}
-	return file.Home().Append(mb.Path)
-}
-
-func parseOrgName(orgName OrgName) (file.Path, OrgName, OrgName) {
-	n := strings.Split(string(orgName), "|")
+func (on OrgName) Parse() (file.Path, OrgName, OrgName) {
+	n := strings.Split(string(on), "|")
 	if len(n) > 2 {
 		return file.Path(n[0]), OrgName(n[1]), OrgName(n[2])
 	}
@@ -133,3 +74,5 @@ func parseOrgName(orgName OrgName) (file.Path, OrgName, OrgName) {
 	}
 	return file.Path(n[0]), OrgName(n[0]), OrgName(n[0])
 }
+
+type RepoName string

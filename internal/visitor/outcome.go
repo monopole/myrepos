@@ -1,4 +1,4 @@
-package pkg
+package visitor
 
 type Outcome int
 

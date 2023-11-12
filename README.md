@@ -13,8 +13,8 @@ Usage:
 myrepos [{path/to/config/file}]
 ```
 
-By default, the path to the config file is `$HOME/.myrepos.yml`.
+By default, the path to the configuration file is `$HOME/.myrepos.yml`.
 
 For an example, see [example_myrepos.yml](example_myrepos.yml).
 
-For a detailed explanation of the fields, see [MyReposConfig](internal/pkg/myreposconfig.go).
+For a detailed explanation of configuration fields, see [config.go](internal/config/config.go).
