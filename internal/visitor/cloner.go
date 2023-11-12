@@ -2,28 +2,33 @@ package visitor
 
 import (
 	"fmt"
+	"github.com/TwiN/go-color"
 	"github.com/monopole/myrepos/internal/runner"
 	"github.com/monopole/myrepos/internal/tree"
 )
 
 type Cloner struct {
-	Err      error
-	FatalErr error
-	// Output of most recent git command.
-	gr *runner.Runner
+	lastErr  error
+	fatalErr error
+	gr       *runner.Runner
 }
 
 func (v *Cloner) fatal(e error) {
-	v.FatalErr, v.Err = e, e
+	v.fatalErr, v.lastErr = e, e
+}
+
+func (v *Cloner) Err() error {
+	return v.lastErr
 }
 
 func (v *Cloner) VisitRootNode(n *tree.RootNode) {
-	if v.FatalErr != nil {
+	if v.fatalErr != nil {
 		return
 	}
 	exists, isDir := n.AbsPath().Exists()
 	if !exists {
-		// Make it for them instead of complain?
+		// Make it for instead of complain?
+		// Could trigger a bunch of work if it's just a typo.
 		v.fatal(fmt.Errorf("if you want the root dir %q, make it first", n.AbsPath()))
 		return
 	}
@@ -32,11 +37,11 @@ func (v *Cloner) VisitRootNode(n *tree.RootNode) {
 		return
 	}
 	indent(0)
-	fmt.Println(n.AbsPath())
+	fmt.Println(color.InBlackOverWhite(n.AbsPath()))
 }
 
 func (v *Cloner) VisitServerNode(n *tree.ServerNode) {
-	if v.FatalErr != nil {
+	if v.fatalErr != nil {
 		return
 	}
 	if exists, isDir := n.AbsPath().Exists(); exists && !isDir {
@@ -44,11 +49,11 @@ func (v *Cloner) VisitServerNode(n *tree.ServerNode) {
 		return
 	}
 	indent(1)
-	fmt.Println(n.Domain())
+	fmt.Println(color.YellowBackground, n.Domain(), color.Reset)
 }
 
 func (v *Cloner) VisitOrgNode(n *tree.OrgNode) {
-	if v.FatalErr != nil {
+	if v.fatalErr != nil {
 		return
 	}
 	if exists, isDir := n.AbsPath().Exists(); exists && !isDir {
@@ -56,11 +61,11 @@ func (v *Cloner) VisitOrgNode(n *tree.OrgNode) {
 		return
 	}
 	indent(2)
-	fmt.Printf("%s|%s|%s\n", n.NameDir(), n.NameOrigin(), n.NameUpstream())
+	fmt.Println(color.CyanBackground, n.NameDir(), color.Reset)
 }
 
 func (v *Cloner) VisitRepoNode(n *tree.RepoNode) {
-	if v.FatalErr != nil {
+	if v.fatalErr != nil {
 		return
 	}
 	exists, isDir := n.AbsPath().Exists()
@@ -88,16 +93,14 @@ func (v *Cloner) VisitRepoNode(n *tree.RepoNode) {
 		return
 	}
 	v.reportStatus(n, outcome, status)
-
-	fmt.Println(n.Name)
 }
 
 func (v *Cloner) reportErr(n *tree.RepoNode, err error) {
-	v.Err = err
+	v.lastErr = err
 	v.reportStatus(n, Oops, err.Error())
 }
 
 func (v *Cloner) reportStatus(n *tree.RepoNode, outcome Outcome, status string) {
 	indent(3)
-	fmt.Printf("%20s %20s %s\n", n.Name, outcome, status)
+	fmt.Printf("%30s%30s %s\n", n.Name, outcome, status)
 }

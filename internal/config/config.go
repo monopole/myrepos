@@ -53,16 +53,25 @@ type Config struct {
 	ServerOpts map[ServerDomain]ServerOpts `yaml:"serverOpts"`
 }
 
+// ServerDomain is the domain of the git server (e.g. github.com).
 type ServerDomain string
 
-func (d ServerDomain) WithPort(p int) string {
-	if p > 0 {
-		return fmt.Sprintf("%s:%d", d, p)
-	}
-	return string(d)
+// ServerOpts provides details about using the git server
+type ServerOpts struct {
+	// What port?
+	Port int
+	// https or ssh?
+	Scheme string
+	// How long to wait for a git operation?
+	Timeout string
 }
 
+// OrgName names the "git" organization.
+// If the name has "|" characters, then it's parsed.
 type OrgName string
+
+// RepoName is the name of a repository, e.g. kubectl
+type RepoName string
 
 func (on OrgName) Parse() (file.Path, OrgName, OrgName) {
 	n := strings.Split(string(on), "|")
@@ -75,4 +84,9 @@ func (on OrgName) Parse() (file.Path, OrgName, OrgName) {
 	return file.Path(n[0]), OrgName(n[0]), OrgName(n[0])
 }
 
-type RepoName string
+func (d ServerDomain) WithPort(p int) string {
+	if p > 0 {
+		return fmt.Sprintf("%s:%d", d, p)
+	}
+	return string(d)
+}

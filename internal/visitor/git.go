@@ -141,7 +141,7 @@ func (v *Cloner) LastLog() (string, error) {
 	}
 	if err := v.gr.Run(
 		cmdLog,
-		`--pretty=format:"%<(20)%ad%>(24)%an : %s"`,
+		`--pretty=format:"%<(26)%ad%>(30)%an : %s"`,
 		`--date=human`,
 		`--abbrev=8`,
 		`--max-count=1`,

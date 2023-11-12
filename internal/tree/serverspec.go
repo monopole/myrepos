@@ -8,7 +8,7 @@ import (
 
 type ServerSpec struct {
 	port    int
-	scheme  pkg.Scheme
+	scheme  Scheme
 	timeout time.Duration
 }
 
@@ -21,7 +21,7 @@ func (s *ServerSpec) Timeout() time.Duration {
 	return s.timeout
 }
 
-func (s *ServerSpec) Scheme() pkg.Scheme {
+func (s *ServerSpec) Scheme() Scheme {
 	return s.scheme
 }
 
@@ -33,7 +33,7 @@ func (s *ServerSpec) Port() int {
 func MakeServerSpec() *ServerSpec {
 	return &ServerSpec{
 		port:    0,
-		scheme:  pkg.SchemeSsh,
+		scheme:  SchemeSsh,
 		timeout: 4 * time.Minute,
 	}
 }
@@ -49,10 +49,10 @@ func FromServerOpts(s *pkg.ServerOpts) (result *ServerSpec, err error) {
 	}
 	if s.Scheme != "" {
 		switch s.Scheme {
-		case pkg.SchemeHttps.String():
-			result.scheme = pkg.SchemeHttps
-		case pkg.SchemeSsh.String():
-			result.scheme = pkg.SchemeSsh
+		case SchemeHttps.String():
+			result.scheme = SchemeHttps
+		case SchemeSsh.String():
+			result.scheme = SchemeSsh
 		default:
 			return nil, fmt.Errorf("unknown scheme %q in serverSpec opts", s.Scheme)
 		}

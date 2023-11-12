@@ -37,7 +37,7 @@ func (n *RepoNode) UrlUpstream() string {
 
 func (n *RepoNode) urlSpec(o string) string {
 	p := path.Join(o, n.Name) + ".git"
-	if n.ServerSpec().Scheme() == pkg.SchemeHttps {
+	if n.ServerSpec().Scheme() == SchemeHttps {
 		// https://github.com/monopole/myrepos.git
 		return "https://" + n.parent.parent.Domain().WithPort(n.ServerSpec().Port()) + "/" + p
 	}

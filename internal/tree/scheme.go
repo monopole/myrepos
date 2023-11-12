@@ -1,4 +1,4 @@
-package pkg
+package tree
 
 type Scheme int
 

@@ -33,7 +33,7 @@ func newCommand() *cobra.Command {
 				return err
 			}
 			t.Accept(&v)
-			return v.Err
+			return v.Err()
 		},
 		SilenceUsage: true,
 	}

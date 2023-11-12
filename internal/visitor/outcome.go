@@ -1,5 +1,7 @@
 package visitor
 
+import "github.com/TwiN/go-color"
+
 type Outcome int
 
 const (
@@ -10,5 +12,10 @@ const (
 )
 
 func (o Outcome) String() string {
-	return []string{"error", "rebased to", "cloned to latest at", "no change since"}[o]
+	return []string{
+		color.Red + "error" + color.Reset,
+		color.Blue + "rebased to" + color.Reset,
+		color.Green + "cloned to latest at" + color.Reset,
+		color.Green + "no change since" + color.Reset,
+	}[o]
 }
