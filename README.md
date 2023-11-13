@@ -1,7 +1,7 @@
 # myrepos
 
-Quickly establish and update clones of remote git
-repositories on local disk, using a YAML configuration file.
+Quickly clone, rebase or report the status of remote git
+repositories on local storage, using a YAML configuration file.
 
 Install:
 ```
@@ -10,7 +10,7 @@ go install github.com/monopole/myrepos@latest
 
 Usage:
 ```
-myrepos [{path/to/config/file}]
+myrepos [{configFile}]
 ```
 
 By default, the path to the configuration file is `$HOME/.myrepos.yml`.
