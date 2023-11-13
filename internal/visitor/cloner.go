@@ -70,7 +70,7 @@ func (v *Cloner) VisitServerNode(n *tree.ServerNode) {
 		v.fatal(fmt.Errorf("%q exists but isn't a directory", n.AbsPath()))
 		return
 	}
-	fmt.Println(color.InBlackOverGreen(header(1, string(n.Domain()))))
+	fmt.Println(color.InBlackOverYellow(header(1, string(n.Domain()))))
 }
 
 func (v *Cloner) VisitOrgNode(n *tree.OrgNode) {
@@ -81,7 +81,7 @@ func (v *Cloner) VisitOrgNode(n *tree.OrgNode) {
 		v.fatal(fmt.Errorf("%q exists but isn't a directory", n.AbsPath()))
 		return
 	}
-	fmt.Println(color.InBlackOverBlue(header(2, string(n.NameDir()))))
+	fmt.Println(color.InBlackOverCyan(header(2, string(n.NameDir()))))
 }
 
 func (v *Cloner) VisitRepoNode(n *tree.RepoNode) {
