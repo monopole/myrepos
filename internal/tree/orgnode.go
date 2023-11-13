@@ -41,7 +41,7 @@ func (n *OrgNode) AbsPath() file.Path {
 	return n.parent.AbsPath().Append(n.nameDir)
 }
 
-func MakeOrgNode(p *ServerNode, orgName pkg.OrgName, names []pkg.RepoName) (on *OrgNode, err error) {
+func MakeOrgNode(p *ServerNode, orgName config.OrgName, names []config.RepoName) (on *OrgNode, err error) {
 	dirName, origin, upstream := orgName.Parse()
 	on = &OrgNode{
 		parent:       p,

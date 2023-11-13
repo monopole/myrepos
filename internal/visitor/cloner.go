@@ -2,10 +2,30 @@ package visitor
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/TwiN/go-color"
 	"github.com/monopole/myrepos/internal/runner"
 	"github.com/monopole/myrepos/internal/tree"
 )
+
+const (
+	repoNameFieldSize = 40
+	spaces            = "                             "
+)
+
+var (
+	fmtHeader = "%-" + strconv.Itoa(repoNameFieldSize) + "s"
+	fmtReport = "%" + strconv.Itoa(repoNameFieldSize) + "s%30s %s\n"
+)
+
+func indent(i int) string {
+	return spaces[:i*2]
+}
+
+func header(i int, arg string) string {
+	return fmt.Sprintf(fmtHeader, indent(i)+arg)
+}
 
 type Cloner struct {
 	lastErr  error
@@ -36,11 +56,13 @@ func (v *Cloner) VisitRootNode(n *tree.RootNode) {
 		v.fatal(fmt.Errorf("%q exists but isn't a directory", n.AbsPath()))
 		return
 	}
-	indent(0)
-	fmt.Println(color.InBlackOverWhite(n.AbsPath()))
+	fmt.Println(color.InBlackOverGray(header(0, string(n.AbsPath()))))
 }
 
 func (v *Cloner) VisitServerNode(n *tree.ServerNode) {
+	// TODO: Use some simple git command, e.g.
+	//  git remote show origin
+	// to comfirm that the server is reachable.
 	if v.fatalErr != nil {
 		return
 	}
@@ -48,8 +70,7 @@ func (v *Cloner) VisitServerNode(n *tree.ServerNode) {
 		v.fatal(fmt.Errorf("%q exists but isn't a directory", n.AbsPath()))
 		return
 	}
-	indent(1)
-	fmt.Println(color.YellowBackground, n.Domain(), color.Reset)
+	fmt.Println(color.InBlackOverGreen(header(1, string(n.Domain()))))
 }
 
 func (v *Cloner) VisitOrgNode(n *tree.OrgNode) {
@@ -60,8 +81,7 @@ func (v *Cloner) VisitOrgNode(n *tree.OrgNode) {
 		v.fatal(fmt.Errorf("%q exists but isn't a directory", n.AbsPath()))
 		return
 	}
-	indent(2)
-	fmt.Println(color.CyanBackground, n.NameDir(), color.Reset)
+	fmt.Println(color.InBlackOverBlue(header(2, string(n.NameDir()))))
 }
 
 func (v *Cloner) VisitRepoNode(n *tree.RepoNode) {
@@ -101,6 +121,5 @@ func (v *Cloner) reportErr(n *tree.RepoNode, err error) {
 }
 
 func (v *Cloner) reportStatus(n *tree.RepoNode, outcome Outcome, status string) {
-	indent(3)
-	fmt.Printf("%30s%30s %s\n", n.Name, outcome, status)
+	fmt.Printf(fmtReport, n.Name, outcome, status)
 }

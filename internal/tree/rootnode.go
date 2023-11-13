@@ -22,11 +22,11 @@ func (n *RootNode) AbsPath() file.Path {
 	return n.absPath
 }
 
-func MakeRootNode(c *pkg.Config) (rn *RootNode, err error) {
+func MakeRootNode(c *config.Config) (rn *RootNode, err error) {
 	rn = &RootNode{
 		absPath: absRootDir(c),
 	}
-	serverSpecs := make(map[pkg.ServerDomain]*ServerSpec)
+	serverSpecs := make(map[config.ServerDomain]*ServerSpec)
 	for d, opts := range c.ServerOpts {
 		serverSpecs[d], err = FromServerOpts(&opts)
 		if err != nil {
@@ -50,7 +50,7 @@ func MakeRootNode(c *pkg.Config) (rn *RootNode, err error) {
 	return rn, nil
 }
 
-func absRootDir(c *pkg.Config) file.Path {
+func absRootDir(c *config.Config) file.Path {
 	if c.Path == "" {
 		return file.Home()
 	}

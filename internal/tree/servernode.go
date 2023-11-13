@@ -9,7 +9,7 @@ import (
 type ServerNode struct {
 	parent   *RootNode
 	spec     *ServerSpec
-	domain   pkg.ServerDomain
+	domain   config.ServerDomain
 	children []*OrgNode
 }
 
@@ -28,13 +28,13 @@ func (n *ServerNode) ServerSpec() *ServerSpec {
 	return n.spec
 }
 
-func (n *ServerNode) Domain() pkg.ServerDomain {
+func (n *ServerNode) Domain() config.ServerDomain {
 	return n.domain
 }
 
 func MakeServerNode(
-	p *RootNode, n pkg.ServerDomain,
-	spec *ServerSpec, orgMap map[pkg.OrgName][]pkg.RepoName) (sn *ServerNode, err error) {
+	p *RootNode, n config.ServerDomain,
+	spec *ServerSpec, orgMap map[config.OrgName][]config.RepoName) (sn *ServerNode, err error) {
 	sn = &ServerNode{
 		parent: p,
 		spec:   spec,

@@ -49,7 +49,7 @@ func (n *RepoNode) IsAFork() bool {
 	return n.parent.nameOrigin != n.parent.nameUpstream
 }
 
-func MakeRepoNode(p *OrgNode, name pkg.RepoName) (n *RepoNode, err error) {
+func MakeRepoNode(p *OrgNode, name config.RepoName) (n *RepoNode, err error) {
 	return &RepoNode{
 		parent: p,
 		Name:   string(name),

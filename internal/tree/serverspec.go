@@ -2,8 +2,9 @@ package tree
 
 import (
 	"fmt"
-	"github.com/monopole/myrepos/internal/config"
 	"time"
+
+	"github.com/monopole/myrepos/internal/config"
 )
 
 type ServerSpec struct {
@@ -39,7 +40,7 @@ func MakeServerSpec() *ServerSpec {
 }
 
 // FromServerOpts creates a ServerSpec from its serialized form.
-func FromServerOpts(s *pkg.ServerOpts) (result *ServerSpec, err error) {
+func FromServerOpts(s *config.ServerOpts) (result *ServerSpec, err error) {
 	result = MakeServerSpec()
 	if s.Timeout != "" {
 		result.timeout, err = time.ParseDuration(s.Timeout)

@@ -2,19 +2,21 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/monopole/myrepos/internal/config"
 	"github.com/monopole/myrepos/internal/file"
+	"github.com/monopole/myrepos/internal/ssh"
 	"github.com/monopole/myrepos/internal/tree"
 	"github.com/monopole/myrepos/internal/visitor"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
-	"os"
 )
 
 func newCommand() *cobra.Command {
-	var cfg *pkg.Config
+	var cfg *config.Config
 	return &cobra.Command{
-		Use:     "myrepos",
+		Use:     "myrepos [{path/to/config/file}]",
 		Short:   "Clone or rebase the repositories specified in the input file.",
 		Long:    "",
 		Example: "",
@@ -27,11 +29,17 @@ func newCommand() *cobra.Command {
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			v := visitor.Cloner{}
+			if err := ssh.ErrIfNoSshAgent(); err != nil {
+				return err
+			}
+			if err := ssh.ErrIfNoSshKeys(); err != nil {
+				return err
+			}
 			t, err := tree.MakeRootNode(cfg)
 			if err != nil {
 				return err
 			}
+			v := visitor.Cloner{}
 			t.Accept(&v)
 			return v.Err()
 		},
@@ -46,12 +54,12 @@ func main() {
 	os.Exit(0)
 }
 
-func loadConfig(p file.Path) (*pkg.Config, error) {
+func loadConfig(p file.Path) (*config.Config, error) {
 	body, err := os.ReadFile(string(p))
 	if err != nil {
 		return nil, fmt.Errorf("unable to read config file %q", p)
 	}
-	var c pkg.Config
+	var c config.Config
 	if err = yaml.Unmarshal(body, &c); err != nil {
 		return nil, err
 	}

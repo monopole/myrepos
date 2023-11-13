@@ -74,11 +74,15 @@ func (r *Runner) Run(args ...string) error {
 			if err != nil {
 				if msg, isCommon := r.commonError(err); isCommon {
 					return fmt.Errorf(
-						"%s while running: %s", msg, cmd.String())
+						"%s (was running: %s)", msg, cmd.String())
+				}
+				if cmd.Dir == "" {
+					return fmt.Errorf("%w (was running %q)\n    %s",
+						err, cmd.String(), r.GetOutput())
 				}
 				return fmt.Errorf(
-					"in dir %s running %q %w\n%s",
-					cmd.Dir, cmd.String(), err, r.GetOutput())
+					"%w (was running %q in dir %q)\n    %s",
+					err, cmd.String(), cmd.Dir, r.GetOutput())
 			}
 			return err
 		})

@@ -3,6 +3,7 @@ package visitor
 import (
 	"fmt"
 	"github.com/monopole/myrepos/internal/runner"
+	"github.com/monopole/myrepos/internal/ssh"
 	"github.com/monopole/myrepos/internal/tree"
 	"path"
 	"strings"
@@ -12,10 +13,11 @@ const gitProgram = "git"
 
 // commonErrs maps common error substrings to one line summaries.
 var commonErrs = map[string]string{
-	"Could not resolve hostname": "cannot reach host",
-	"Connection refused":         "cannot reach host",
-	"You have unstaged changes":  "unstaged changes - commit or stash first",
-	"Operation timed out":        "timed out - is repo accessible?",
+	"Could not resolve hostname":    "cannot reach host",
+	"Connection refused":            "cannot reach host",
+	"You have unstaged changes":     "unstaged changes - commit or stash first",
+	"Operation timed out":           "timed out - is repo accessible?",
+	"Permission denied (publickey)": ssh.NoSshKeysErr,
 }
 
 const (
