@@ -13,13 +13,21 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	version   = "v0.2.2"
+	shortHelp = "Clone or rebase the repositories specified in the input file."
+)
+
 func newCommand() *cobra.Command {
 	var cfg *config.Config
 	return &cobra.Command{
-		Use:     "myrepos [{path/to/config/file}]",
-		Short:   "Clone or rebase the repositories specified in the input file.",
-		Long:    "",
-		Example: "",
+		Use:   "myrepos [{configFile}]",
+		Short: shortHelp,
+		Long:  shortHelp + " " + version,
+		Example: "  myrepos " + file.DefaultConfigFileName() + `
+
+  If the config file argument has the default value shown above,
+  then the argument can be omitted.`,
 		Args: func(_ *cobra.Command, args []string) error {
 			filePath, err := file.GetFilePath(args)
 			if err != nil {

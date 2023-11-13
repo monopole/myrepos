@@ -12,6 +12,10 @@ const defaultConfigFileName = ".myrepos"
 
 var extensions = []string{".yml", ".yaml"}
 
+func DefaultConfigFileName() string {
+	return filepath.Join(string(Home()), defaultConfigFileName+extensions[0])
+}
+
 func computeDefaultConfigFilePath() (Path, error) {
 	var badFiles []Path
 	for i := range extensions {
