@@ -1,42 +1,32 @@
-# Path is the path below which all repos are found.
-# It's specified outside of Layout to avoid extra indents.
-# If the path lacks a leading '/', it will be interpreted
-# as a path relative to value of the HOME environment
-# variable. If HOME is undefined, '.' is used.
+# myrepos config file example.
+# For field details, see
+# https://github.com/monopole/myrepos/blob/main/internal/config/config.go
+
+# path is the root path of all local storage repo clones.
+# If this lacks a leading /, it's taken relative to $HOME.
 path: myrepos
 
 # Layout is the directory layout below Path.
-# See internal/pkg/myreposconfig.go for more details.
 layout:
+  github.com:
+    monopole:
+      - shexec
+      - mdrip
+      - myrepos
+      - snips
+    sigs.k8s.io|monopole|kubernetes-sigs:
+      - kustomize
   github.tesla.com:
     design-technology:
-      - app-build-utils
-      - argocd-manifests
       - design-docs
       - ops
       - parallax-utils
 # git.savannah.gnu.org:
 #   emacs:
 #     - org-mode
-  github.com:
-    monopole:
-      - shexec
-      - cplusplus
-      - dotFiles
-      - mdrip
-      - myrepos
-      - myScripts
-      - snips
-    k8s.io|monopole|kubernetes:
-      - kubectl
-    sigs.k8s.io|monopole|kubernetes-sigs:
-      - kustomize
 
 # ServerOpts is a mapping from a git server domain name
-# to optional details about the serverSpec, like the scheme to
-# use when cloning, what timeout to use, what port, etc.
+# to optional details about the git server.
 serverOpts:
-  github.tesla.com:
-    timeout: '10m'
   git.savannah.gnu.org:
     timeout: '10m'

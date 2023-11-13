@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	// Path is the path below which all repos are found.
+	// Path is the root path to all local storage repos.
 	// It's specified outside of Layout to avoid extra indents.
 	// If the path lacks a leading '/', it will be interpreted
 	// as a path relative to value of the HOME environment
@@ -19,9 +19,9 @@ type Config struct {
 	//
 	// Just below Path one finds directories named after git
 	// server domains. Below these one finds directories that
-	// are usually named after "organizations" (e.g google or
-	// kubernetes), and below each of these are the repositories
-	// maintained by that organization.
+	// are usually named after "organizations", e.g google,
+	// kubernetes, internal departments, etc. Below each of
+	// these are the repositories maintained by that organization.
 	//
 	// Sometimes one wants a directory name that doesn't match
 	// an organization name, and/or one wants to indicate that

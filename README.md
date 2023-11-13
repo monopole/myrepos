@@ -1,6 +1,6 @@
 # myrepos
 
-Quickly clone, rebase or report the status of remote git
+Clone, rebase or just report the status of remote git
 repositories on local storage, using a YAML configuration file.
 
 Install:
