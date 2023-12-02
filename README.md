@@ -10,11 +10,13 @@ go install github.com/monopole/myrepos@latest
 
 Usage:
 ```
-myrepos [{configFile}]
+myrepos [{configurationFile}...]
 ```
 
-By default, the path to the configuration file is `$HOME/.myrepos.yml`.
+Specify one or more configuration files
+as arguments (e.g. [myrepos_example.yml](myrepos_example.yml)).
 
-Example configuration file: [example_myrepos.yml](example_myrepos.yml)
+If no argument is specified, an attempt
+will be made to read `$HOME/.myrepos.yml`.
 
 Detailed explanation of configuration fields: [config.go](internal/config/config.go)
