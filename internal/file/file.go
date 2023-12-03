@@ -35,20 +35,25 @@ func computeDefaultConfigFilePath() (Path, error) {
 	return "", fmt.Errorf("unable to open any of these: %v", badFiles)
 }
 
-func GetFilePath(args []string) (Path, error) {
+func GetFilePath(args []string) ([]Path, error) {
 	if len(args) == 0 {
-		return computeDefaultConfigFilePath()
+		p, err := computeDefaultConfigFilePath()
+		return []Path{p}, err
 	}
-	fp := Path(args[0])
-	if exists, isDir := fp.Exists(); exists && !isDir {
-		return fp, nil
-	} else {
-		if isDir {
-			return "", fmt.Errorf(
-				"%q found, but it's a directory, not a config file", fp)
+	var result []Path
+	for i := range args {
+		p := Path(args[i])
+		if exists, isDir := p.Exists(); exists && !isDir {
+			result = append(result, p)
+		} else {
+			if isDir {
+				return nil, fmt.Errorf(
+					"%q found, but it's a directory, not a config file", p)
+			}
+			return nil, fmt.Errorf("no config file found at %q", p)
 		}
-		return "", fmt.Errorf("no config file found at %q", fp)
 	}
+	return result, nil
 }
 
 // Exists returns a boolean pair, the first is true if the path exists,

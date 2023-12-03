@@ -19,7 +19,7 @@ const (
 )
 
 func newCommand() *cobra.Command {
-	var cfg *config.Config
+	var cfg []*config.Config
 	return &cobra.Command{
 		Use:   "myrepos [{configFile}]",
 		Short: shortHelp,
@@ -29,11 +29,18 @@ func newCommand() *cobra.Command {
   If the config file argument has the default value shown above,
   then the argument can be omitted.`,
 		Args: func(_ *cobra.Command, args []string) error {
-			filePath, err := file.GetFilePath(args)
+			paths, err := file.GetFilePath(args)
 			if err != nil {
 				return err
 			}
-			cfg, err = loadConfig(filePath)
+			for i := range paths {
+				var c *config.Config
+				c, err = loadConfig(paths[i])
+				if err != nil {
+					return err
+				}
+				cfg = append(cfg, c)
+			}
 			return err
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -43,13 +50,18 @@ func newCommand() *cobra.Command {
 			if err := ssh.ErrIfNoSshKeys(); err != nil {
 				return err
 			}
-			t, err := tree.MakeRootNode(cfg)
-			if err != nil {
-				return err
+			for i := range cfg {
+				t, err := tree.MakeRootNode(cfg[i])
+				if err != nil {
+					return err
+				}
+				v := visitor.Cloner{}
+				t.Accept(&v)
+				if err = v.Err(); err != nil {
+					return err
+				}
 			}
-			v := visitor.Cloner{}
-			t.Accept(&v)
-			return v.Err()
+			return nil
 		},
 		SilenceUsage: true,
 	}
