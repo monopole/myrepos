@@ -4,11 +4,15 @@ import (
 	"github.com/monopole/myrepos/internal/config"
 	"github.com/monopole/myrepos/internal/file"
 	"path"
+	"strings"
 )
 
+const DefaultBranch = "main"
+
 type RepoNode struct {
-	parent *OrgNode
-	Name   string
+	parent        *OrgNode
+	Name          string
+	DefaultBranch string
 }
 
 func (n *RepoNode) Accept(v Visitor) {
@@ -50,8 +54,16 @@ func (n *RepoNode) IsAFork() bool {
 }
 
 func MakeRepoNode(p *OrgNode, name config.RepoName) (n *RepoNode, err error) {
+	defaultBranch := DefaultBranch
+	repoName := string(name)
+	// Allow user to specify a default branch name after a pipe.
+	if k := strings.Index(repoName, "|"); k >= 0 {
+		defaultBranch = repoName[k+1:]
+		repoName = repoName[:k]
+	}
 	return &RepoNode{
-		parent: p,
-		Name:   string(name),
+		parent:        p,
+		Name:          repoName,
+		DefaultBranch: defaultBranch,
 	}, nil
 }

@@ -76,38 +76,32 @@ func (v *Cloner) Clone(n *tree.RepoNode) (Outcome, error) {
 	return ClonedAt, v.gr.Run(cmdRemote, "-v")
 }
 
-// Rebase switches to the main (or master) branch and rebases.
+// Rebase switches to the default branch and rebases.
 func (v *Cloner) Rebase(n *tree.RepoNode) (Outcome, error) {
-	var (
-		err        error
-		mainBranch string
-	)
+	var err error
 	v.gr, err = runner.NewRunner(gitProgram, n.ServerSpec().Timeout(), commonErrs)
 	if err != nil {
 		return Oops, err
 	}
 	v.gr.SetPwd(n.AbsPath())
-	mainBranch, err = v.determineMainBranch()
-	if err != nil {
-		return Oops, err
-	}
-	if err = v.gr.Run(cmdCheckout, mainBranch); err != nil {
-		return Oops, err
+	if err = v.gr.Run(cmdCheckout, n.DefaultBranch); err != nil {
+		return Oops, fmt.Errorf(
+			"unable to checkout default branch %q; %w", n.DefaultBranch, err)
 	}
 	if n.IsAFork() {
 		if err = v.gr.Run(cmdFetch, remoteUpstream); err != nil {
 			return Oops, err
 		}
-		if err = v.gr.Run(cmdDiff, path.Join(remoteUpstream, mainBranch)); err != nil {
+		if err = v.gr.Run(cmdDiff, path.Join(remoteUpstream, n.DefaultBranch)); err != nil {
 			return Oops, err
 		}
 		if len(v.gr.GetOutput()) == 0 {
 			return NoUpdate, nil
 		}
-		if err = v.gr.Run(cmdRebase, path.Join(remoteUpstream, mainBranch)); err != nil {
+		if err = v.gr.Run(cmdRebase, path.Join(remoteUpstream, n.DefaultBranch)); err != nil {
 			return Oops, err
 		}
-		if err = v.gr.Run(cmdPush, "-f", remoteOrigin, mainBranch); err != nil {
+		if err = v.gr.Run(cmdPush, "-f", remoteOrigin, n.DefaultBranch); err != nil {
 			return Oops, err
 		}
 		return RebasedTo, nil
@@ -115,26 +109,16 @@ func (v *Cloner) Rebase(n *tree.RepoNode) (Outcome, error) {
 	if err = v.gr.Run(cmdFetch, remoteOrigin); err != nil {
 		return Oops, err
 	}
-	if err = v.gr.Run(cmdDiff, path.Join(remoteOrigin, mainBranch)); err != nil {
+	if err = v.gr.Run(cmdDiff, path.Join(remoteOrigin, n.DefaultBranch)); err != nil {
 		return Oops, err
 	}
 	if len(v.gr.GetOutput()) == 0 {
 		return NoUpdate, nil
 	}
-	if err = v.gr.Run(cmdRebase, path.Join(remoteOrigin, mainBranch)); err != nil {
+	if err = v.gr.Run(cmdRebase, path.Join(remoteOrigin, n.DefaultBranch)); err != nil {
 		return Oops, err
 	}
 	return RebasedTo, nil
-}
-
-func (v *Cloner) determineMainBranch() (string, error) {
-	if err := v.gr.Run(cmdBranch, "--list", "main"); err != nil {
-		return "", err
-	}
-	if len(v.gr.GetOutput()) > 0 {
-		return "main", nil
-	}
-	return "master", nil
 }
 
 func (v *Cloner) LastLog() (string, error) {

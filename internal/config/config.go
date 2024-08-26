@@ -38,7 +38,11 @@ type Config struct {
 // ServerDomain is the domain of the git server (e.g. github.com).
 type ServerDomain string
 
-// RepoName is the name of a repository, e.g. kubectl
+// RepoName is the name of a repository, e.g. kubectl.
+// It can optionally be followed by a pipe char ('|') and
+// then the name of the repo's default branch, e.g.
+// "kubectl|master". If there's no pipe char, the name of
+// the repo's default branch defaults to "main".
 type RepoName string
 
 // OrgName names the git "organization".
